@@ -145,10 +145,14 @@ if [[ ! -z "${LDAPURI}" ]]; then
     sed -i "s|^uri.*$|uri ${LDAPURI}|" /config/pam_ldap.conf
 fi
 if [[ ! -z "${BINDDN}" ]]; then
-    sed -i "s/^binddn.*$/binddn ${BINDDN}/" /config/pam_ldap.conf
+	# BINDDN变量可能包含转义字符\, 提前替换为\\保证sed结果正确
+    sed -i "s/^binddn.*$/binddn ${BINDDN//\\/\\\\}/" /config/pam_ldap.conf
 fi
 if [[ ! -z "${BINDPW}" ]]; then
     sed -i "s/^bindpw.*$/bindpw ${BINDPW}/" /config/pam_ldap.conf
+fi
+if [[ ! -z "${PAM_FILTER}" ]]; then
+    sed -i "s/^pam_filter.*$/pam_filter ${PAM_FILTER}/" /config/pam_ldap.conf
 fi
 if [[ ! -z "${SEARCHSCOPE}" ]]; then
     sed -i "s/^scope.*$/scope ${SEARCHSCOPE}/" /config/pam_ldap.conf

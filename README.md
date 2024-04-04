@@ -48,6 +48,7 @@ services:
       LDAPURI: 'ldap://192.168.1.1/'
       BINDDN: 'CN=ocserv,CN=Users,DC=example,DC=com'
       BINDPW: 'aSuperSecurePassword'
+      PAM_FILTER: '|(memberOf:1.2.840.113556.1.4.1941:=CN=vpn,OU=GroupRoot,DC=xx,DC=yyy,DC=com)'
       SEARCHSCOPE: 'sub'
       PAM_LOGIN_ATTRIBUTE: 'userPrincipalName'
       CA_CN: 'VPN CA'
@@ -66,6 +67,11 @@ services:
 Then, start the vpn service like so:
 ```
 docker-compose up -d
+```
+
+## build docker image
+```bash
+sudo docker build -t ocserv-ldap .
 ```
 
 ## Using your own certificates
