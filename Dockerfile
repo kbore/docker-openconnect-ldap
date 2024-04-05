@@ -16,8 +16,17 @@ VOLUME /config
 # 替换镜像源地址, 加快docker构建速度
 COPY debian/sources.list /etc/apt/
 # RUN rm /etc/apt/sources.list.d/debian.sources
-RUN apt-get update && apt-get -y install ocserv libnss-ldap iptables procps rsync sipcalc ca-certificates
+RUN apt-get update && apt-get install -y ocserv libnss-ldap iptables procps rsync sipcalc ca-certificates
+
+# 安装网络调试工具
+RUN apt-get install -y vim net-tools iproute2
 RUN rm -rf /etc/pam_ldap.conf && touch /config/pam_ldap.conf && ln -s /config/pam_ldap.conf /etc/pam_ldap.conf
+
+# 解决vim操作习惯问题
+RUN echo 'source $VIMRUNTIME/defaults.vim' >> /etc/vim/vimrc.local
+RUN echo 'let skip_defaults_vim = 1' >> /etc/vim/vimrc.local
+RUN echo 'set mouse=r' >> /etc/vim/vimrc.local
+RUN echo 'set paste' >> /etc/vim/vimrc.local
 
 ADD ocserv /etc/default/ocserv
 ADD pam_ldap /etc/default/pam_ldap

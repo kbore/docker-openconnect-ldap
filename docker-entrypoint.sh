@@ -86,10 +86,8 @@ elif [[ ${TUNNEL_MODE} == "split-include" ]]; then
 	# process name servers in the list
 	for tunnel_route_item in "${tunnel_route_list[@]}"; do
 		tunnel_route_item=$(echo "${tunnel_route_item}" | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
-		IFS='/' read -ra ip_subnet_list <<< "${tunnel_route_item}"
-		STRLENGTH=$(echo -n ${ip_subnet_list[1]} | wc -m)
-		IP=$(sipcalc ${ip_subnet_list[0]} ${ip_subnet_list[1]} | awk '/Host address/ {print $4; exit}')
-		NETMASK=$(sipcalc ${ip_subnet_list[0]} ${ip_subnet_list[1]} | awk '/Network mask/ {print $4; exit}')
+		IP=$(sipcalc "$tunnel_route_item" | awk '/Host address/ {print $4; exit}')
+		NETMASK=$(sipcalc "$tunnel_route_item" | awk '/Network mask/ {print $4; exit}')
 		TUNDUP=$(cat /config/ocserv.conf | grep "route=${IP}/${NETMASK}")
 		if [[ -z "$TUNDUP" ]]; then
 			echo "$(date) [info] Adding route=$IP/$NETMASK to ocserv.conf"
@@ -232,7 +230,7 @@ mkdir -p /dev/net
 mknod /dev/net/tun c 10 200
 chmod 600 /dev/net/tun
 
-chmod -R 777 /config
+# chmod -R 777 /config
 
 # Run OpenConnect Server
 exec "$@"

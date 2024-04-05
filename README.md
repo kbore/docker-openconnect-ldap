@@ -38,7 +38,7 @@ services:
       - "443:443/udp"
     environment:
       LISTEN_PORT: 443
-      TUNNEL_MODE: 'split_include'
+      TUNNEL_MODE: 'split-include'
       TUNNEL_ROUTES: '192.168.1.0/24, 192.168.69.0/24'
       DNS_SERVERS: 192.168.1.1
       SPLIT_DNS_DOMAINS: 'internal.domain.com'
@@ -71,7 +71,19 @@ docker-compose up -d
 
 ## build docker image
 ```bash
+# 构建本地镜像用于测试
 sudo docker build -t ocserv-ldap .
+
+# 推送镜像到dockerhub
+sudo docker login
+sudo docker build -t ocserv-ldap . --no-cache
+sudo docker tag ocserv-ldap:latest dkbore/ocserv-ldap:0.1
+sudo docker tag ocserv-ldap:latest dkbore/ocserv-ldap:latest
+sudo docker push dkbore/ocserv-ldap:latest
+sudo docker push dkbore/ocserv-ldap:0.1
+
+# 删除镜像制作时产生的untagged镜像
+sudo docker rmi $(sudo docker images | grep "^<none>" | awk "{print $3}")
 ```
 
 ## Using your own certificates
